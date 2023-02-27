@@ -1,0 +1,76 @@
+esphome:
+  name: air-quality-monitor
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "<your_key_here>"
+
+ota:
+  password: "<your_password_here>"
+
+wifi:
+  ssid: "<your_ssid_here>"
+  password: "<your_password_here>"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Air-quality-monitor Fallback Hotspot"
+    password: "blahblah"
+
+captive_portal:
+    
+i2c:
+  sda: D3
+  scl: D4
+  scan: true
+  id: db_busa
+  
+ads1115:
+  #  continuous_mode : on
+ - address: 0x48
+   id: ads1115_48
+   continuous_mode: on
+
+sensor:
+  - name: "boiler_mq5_flammable_gas_sensor"
+    id: boiler_mq5_flammable_gas_sensor #ads1115_48_a0
+    ads1115_id: ads1115_48
+    multiplexer: 'A0_GND'
+    gain: 6.144
+    platform: ads1115
+    accuracy_decimals: 2
+    update_interval: 30s
+    filters:
+      lambda: return (x/5 *100);    
+    unit_of_measurement: "%"
+
+  - name: "boiler_mq7_co_sensor"
+    id: boiler_mq7_co_sensor #ads1115_48_a1
+    ads1115_id: ads1115_48
+    multiplexer: 'A1_GND'
+    gain: 6.144
+    platform: ads1115
+    accuracy_decimals: 2
+    update_interval: 30s
+    filters:
+      lambda: return (x/5 *100); 
+    unit_of_measurement: "%"
+
+  - name: "boiler_mq135_harmful_gas_sensor"
+    id: boiler_mq135_harmful_gas_sensor #ads1115_48_a2
+    ads1115_id: ads1115_48
+    multiplexer: 'A2_GND'
+    gain: 6.144
+    platform: ads1115
+    accuracy_decimals: 2
+    update_interval: 30s
+    filters:
+      lambda: return (x/5 *100);        
+    unit_of_measurement: "%"    
